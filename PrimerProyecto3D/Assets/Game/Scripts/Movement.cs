@@ -7,13 +7,16 @@ public class Movement : MonoBehaviour
     public float JumpForce = 5f;
     public float sensibility = 2f;
     public float limitX = 45f;
-    public Transform cam;
+    //public Transform cam;
 
     private Rigidbody rb;  
     private bool grounded;
 
     private float rotX = 0f;
 
+    public Transform SpawnPoint;
+
+    public float a = 0.01f;
     float x = 1;
     float y = 1;
     float z = 1;
@@ -28,14 +31,14 @@ public class Movement : MonoBehaviour
     void Update()
     {
         //Raycast
-        Debug.DrawRay(transform.position, Vector3.right * 1.8f, Color.red);
+        Debug.DrawRay(transform.position, Vector3.down * 1.8f, Color.red);
         Gizmos.color = Color.red;
-
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.down, 1.8f);
 
         //Mover
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        transform.Translate(new Vector3(horizontal, 0, vertical) * speed * Time.deltaTime);
+        transform.Translate(new Vector3(horizontal, 0, 0) * speed * Time.deltaTime);
 
         //Saltar
         if (Input.GetKeyDown(KeyCode.Space))
@@ -47,13 +50,13 @@ public class Movement : MonoBehaviour
                 //rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
             }
         }
-
+        /*
         //Camara
         rotX += -Input.GetAxis("Mouse Y") * sensibility;
         rotX = Mathf.Clamp(rotX, -limitX, limitX);
         cam.localRotation = Quaternion.Euler(rotX,0,0);
         transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * sensibility, 0);
-
+        */
         //Sprint
         if (Input.GetKey(KeyCode.LeftShift))
         { speed = 12f; }
@@ -69,20 +72,20 @@ public class Movement : MonoBehaviour
         { RotarZ(); }
         
         //Rescalar
-        if (Input.GetKeyDown(KeyCode.O))
+        if (Input.GetKey(KeyCode.O))
         {
             transform.localScale = new Vector3(x,y,z);
-            x += 0.1f;
-            y += 0.1f;
-            z += 0.1f;
+            x += a;
+            y += a;
+            z += a;
         }
 
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKey(KeyCode.I))
         {
             transform.localScale = new Vector3(x,y,z);
-            x -= 0.1f;
-            y -= 0.1f;
-            z -= 0.1f;
+            x -= a;
+            y -= a;
+            z -= a;
         }
     }
 
@@ -92,6 +95,10 @@ public class Movement : MonoBehaviour
         if (collision.gameObject.tag == "Ground")
         {
             grounded = true;
+        }
+        if (collision.gameObject.tag == ("DeathZone"))
+        {
+            transform.position = SpawnPoint.position;
         }
     }
     public void OnCollisionExit(Collision collision)
