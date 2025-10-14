@@ -62,7 +62,7 @@ public class Movement : MonoBehaviour
             Debug.Log("Pew Pew");
 
             RaycastHit hitted;
-            if (Physics.Raycast(cam.position, cam.forward, out hitted, 100f))
+            if (Physics.Raycast(cam.position, cam.forward, out hitted, 5f))
             {
                 Destroy(hitted.transform.gameObject);
                 Debug.Log("Pewed");
