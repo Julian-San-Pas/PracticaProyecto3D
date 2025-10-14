@@ -1,13 +1,12 @@
 using Unity.Mathematics;
 using UnityEngine;
-
 public class Movement : MonoBehaviour
 {
     public float speed = 5f;
     public float JumpForce = 5f;
     public float sensibility = 2f;
-    public float limitX = 45f;
-    //public Transform cam;
+    public float limitCamX = 45f;
+    public Transform cam;
 
     private Rigidbody rb;  
     private bool grounded;
@@ -16,7 +15,7 @@ public class Movement : MonoBehaviour
 
     public Transform SpawnPoint;
 
-    public float a = 0.01f;
+    public float VelocidadEscala = 0.01f;
     float x = 1;
     float y = 1;
     float z = 1;
@@ -38,7 +37,7 @@ public class Movement : MonoBehaviour
         //Mover
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        transform.Translate(new Vector3(horizontal, 0, 0) * speed * Time.deltaTime);
+        transform.Translate(new Vector3(horizontal, 0, vertical) * speed * Time.deltaTime);
 
         //Saltar
         if (Input.GetKeyDown(KeyCode.Space))
@@ -50,13 +49,28 @@ public class Movement : MonoBehaviour
                 //rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
             }
         }
-        /*
+        
         //Camara
         rotX += -Input.GetAxis("Mouse Y") * sensibility;
-        rotX = Mathf.Clamp(rotX, -limitX, limitX);
+        rotX = Mathf.Clamp(rotX, -limitCamX, limitCamX);
         cam.localRotation = Quaternion.Euler(rotX,0,0);
         transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * sensibility, 0);
-        */
+
+        Debug.DrawRay(cam.position, cam.forward * 5f, Color.blue);
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Debug.Log("Pew Pew");
+
+            RaycastHit hitted;
+            if (Physics.Raycast(cam.position, cam.forward, out hitted, 100f))
+            {
+                Destroy(hitted.transform.gameObject);
+                Debug.Log("Pewed");
+            }
+        }
+
+
+
         //Sprint
         if (Input.GetKey(KeyCode.LeftShift))
         { speed = 12f; }
@@ -75,17 +89,17 @@ public class Movement : MonoBehaviour
         if (Input.GetKey(KeyCode.O))
         {
             transform.localScale = new Vector3(x,y,z);
-            x += a;
-            y += a;
-            z += a;
+            x += VelocidadEscala;
+            y += VelocidadEscala;
+            z += VelocidadEscala;
         }
 
         if (Input.GetKey(KeyCode.I))
         {
             transform.localScale = new Vector3(x,y,z);
-            x -= a;
-            y -= a;
-            z -= a;
+            x -= VelocidadEscala;
+            y -= VelocidadEscala;
+            z -= VelocidadEscala;
         }
     }
 
